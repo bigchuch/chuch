@@ -18,7 +18,7 @@ def init():
         if existingCustomer == 1:
             register()
         if existingCustomer == 2:
-            print("login")
+            login()
         else:
             print("Invalid selection")
             init()
