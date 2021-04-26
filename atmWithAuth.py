@@ -1,16 +1,16 @@
-from datetime import date
-import time
-import sys
+import validation
 import random
+import database
 
-time = (time.strftime("%H:%M:%S"))
-date = date.today()
+
+
 balance = 100000
-database ={}
+
+
 
 
 def init():
-    try:
+    #try:
         print("********** welcome to MY-ATM app **********\n")
 
         existingCustomer = int(input("New Customer (1) Existing customer (2)\n>"))
@@ -18,13 +18,13 @@ def init():
         if existingCustomer == 1:
             register()
         if existingCustomer == 2:
-            print("login")
+            login()
         else:
-            print("Invalid selection")
+            print("Invalid option select")
             init()
-    except ValueError:
-        print("invalid selection\n")
-        init() 
+    #except ValueError:
+       # print("invalid selection\n")
+        #init() 
 
 
 def register():
@@ -35,11 +35,19 @@ def register():
     password = input("Enter your password: ")
     accountNumber = accountNumberGenerator()
     
-    database[accountNumber] = [first_name,last_name,email,password]
+    # database[accountNumber] = [first_name,last_name,email,password]
+    
+    is_user_created = database.create(accountNumber,first_name,last_name,email,password)
 
-    print("registration successful\n")
-    print("your account number is: %d\n" %accountNumber)
-    login()
+    if is_user_created:
+        print("registration successful\n")
+        print("your account number is: %d\n" %accountNumber)
+
+        login()
+
+    else:
+
+        print('something went wrong')
 
 
 def login():
@@ -48,21 +56,29 @@ def login():
             
         print ("**** login ****\n")
 
-        accountNumberByUser = int(input("Enter Account Number: "))
-        passwordByUser = input("Enter password: ")
-        
+        accountNumberByUser = input("Enter Account Number: ")
+        is_valid_account_number = validation.account_number_validation(accountNumberByUser)
 
-        for accountnumber, userDetails in database.items():
-            if accountNumberByUser == accountnumber:
-                if passwordByUser == userDetails[3]:
-                    welcome(userDetails)
-             
-        password_count += 1            
-        print("invalid username or password entered\n")
-        #login()
+        if is_valid_account_number:
+            passwordByUser = input("Enter password: ")
+            
 
-    sys.exit("Too many tries, Try again later")
+            for accountnumber, userDetails in database.items():
+                if int(accountNumberByUser) == accountnumber:
+                    if passwordByUser == userDetails[3]:
+                        welcome(userDetails)
+                
+            password_count += 1            
+            print("invalid username or password entered\n")
+            #login()
+        else:
+            print("account number invalid: check that you have up to 10 digits or entered an integer")
+    print("Too many tries, Try again later")
+    quit()
 
+
+
+  
 
 def welcome(user):
     print("********* Welcome %s %s ********\n" %(user[0],user[1]))
